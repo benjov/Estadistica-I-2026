@@ -1,0 +1,63 @@
+---
+title: "Clase-06"
+author: "Benjamín Oliva"
+date: "2025-12-02"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+### Instalación
+#install.packages("AER")
+#install.packages("quantmod")
+#install.packages("highcharter")
+#install.packages("ggplot2")
+
+# Activación de dependencias
+library(AER)
+library(quantmod)
+library(highcharter)
+library(ggplot2)
+
+```
+
+# Caso Práctico (Cálculo de riesgo sistémico de AMZN)
+
+## Descargar series financieras y graficarlas
+
+```{r Descarga, warning=FALSE}
+options("getSymbols.warning4.0" = FALSE)
+
+# Descargamos la serie de las acciones de Amazon 
+getSymbols("AMZN")
+
+# Qué tipo de objeto es
+class(AMZN)
+```
+
+```{r}
+# Primeros registros
+head(AMZN, 2)
+```
+
+## Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+### Gráfico
+hchart(AMZN)
+
+```
+
+```{r}
+### Descargamos la serie de Nasdaq 
+getSymbols("NDAQ", from = "2020-01-01")#, to = "2020-12-31")
+
+head(NDAQ, 2)
+
+### Gráfico
+hchart(NDAQ)
+```
+

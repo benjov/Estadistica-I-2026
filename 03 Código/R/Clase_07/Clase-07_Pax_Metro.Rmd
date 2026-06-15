@@ -1,0 +1,218 @@
+---
+title: "Clase 7. Pasajeros y otras características del Metro en la CDMX"
+author: "Benjamin Oliva"
+date: "01/12/2025"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+### Dependencies and Setup
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages("readxl")
+# 
+library(ggplot2)
+library(dplyr)
+library(readxl)
+
+```
+
+# Importamos Datos:
+
+Los datos importados son:
+
+* Pasajeros_Millones: Pasajeros transportados (Millones) en el Metro de la CDMX
+* TrenesEnServicio_Unidades: Trenes que están en servicio (Unidades) en el Metro de la CDMX
+* KilometrosRedEnServicio: Kilómetros de red en servicio en el Metro de la CDMX
+* KilometrosRecorridos_Miles: Kilómetros recorridos en el sistema del Metro de la CDMX
+* EnergiaElectricaConsumida_mKWH: Energía eléctrica consumida (Miles de KWH)
+
+Fuente: INEGI (2025)
+
+```{r}
+
+Datos <- read_excel("Base_Transporte.xlsx", sheet = "Datos", col_names = TRUE)
+
+Datos$Fecha = as.Date(Datos$Periodo, format = "%d/%m/%Y")
+
+head(Datos)
+
+```
+
+# Repaso de manejo de Data Frames:
+
+```{r}
+
+#View(Datos)
+
+names(Datos)
+
+tail(Datos)
+
+str(Datos)
+
+dim(Datos)
+
+Datos[ , 2]
+
+Datos[5 , ]
+
+Datos[c(2:259) , 2]
+
+Datos[ , c(2:5)]
+
+Datos[ , c(2, 3, 4, 5)]
+
+Datos[c("Pasajeros_Millones", "TrenesEnServicio_Unidades")]
+
+```
+
+# Tabla de estadísticas decriptivas
+
+```{r}
+
+summary( Datos[ ,c(2:6)] )
+
+#Resumen1 <- summary(Datos[ ,c(2:6)])
+
+#Resumen1
+
+```
+
+# Graficas:
+
+```{r, echo = FALSE}
+
+ggplot(data = Datos, aes(x = Fecha, y = Pasajeros_Millones)) + 
+  geom_line(linewidth = 0.5, color = "darkblue") +
+  #geom_point(size = 1.0, color = "darkblue") + 
+  #theme_bw() + 
+  xlab("Tiempo") + 
+  ylab("Millones de pasajeros") + 
+  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0)) + 
+  theme(plot.subtitle = element_text(size = 10, hjust = 0)) + 
+  theme(plot.caption = element_text(size = 10, hjust = 0)) +
+  theme(plot.margin = unit(c(1,1,1,1), "cm")) +
+  labs(
+    title = "Pasajeros transportados en el Metro de la CDMX",
+    subtitle = "(Ene-2000 a Sep-2025)",
+    caption = "Fuente: Elaboración propia con información del INEGI, \nhttps://www.inegi.org.mx/app/indicadores/?tm=0&t=1090"
+  )
+#
+ggsave("Pax_Metro.png", width = 20, height = 15, units = "cm")
+
+```
+
+
+```{r, echo = FALSE}
+
+ggplot(data = Datos, aes(x = Fecha, y = TrenesEnServicio_Unidades)) + 
+  geom_line(linewidth = 0.5, color = "darkred") +
+  #geom_point(size = 1.0, color = "darkblue") + 
+  #theme_bw() + 
+  xlab("Tiempo") + 
+  ylab("Millones de pasajeros") + 
+  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0)) + 
+  theme(plot.subtitle = element_text(size = 10, hjust = 0)) + 
+  theme(plot.caption = element_text(size = 10, hjust = 0)) +
+  theme(plot.margin = unit(c(1,1,1,1), "cm")) +
+  labs(
+    title = "Trenes en servicio en el Metro de la CDMX",
+    subtitle = "(Ene-2000 a Sep-2025)",
+    caption = "Fuente: Elaboración propia con información del INEGI, \nhttps://www.inegi.org.mx/app/indicadores/?tm=0&t=1090"
+  )
+#
+ggsave("Trains_Metro.png", width = 20, height = 15, units = "cm")
+
+```
+
+```{r, echo = FALSE}
+
+ggplot(data = Datos, aes(x = Fecha, y = KilometrosRedEnServicio)) + 
+  geom_line(linewidth = 0.5, color = "darkgreen") +
+  #geom_point(size = 1.0, color = "darkblue") + 
+  #theme_bw() + 
+  xlab("Tiempo") + 
+  ylab("Km") + 
+  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0)) + 
+  theme(plot.subtitle = element_text(size = 10, hjust = 0)) + 
+  theme(plot.caption = element_text(size = 10, hjust = 0)) +
+  theme(plot.margin = unit(c(1,1,1,1), "cm")) +
+  labs(
+    title = "Kilómetros de red en servicio en el Metro de la CDMX",
+    subtitle = "(Ene-2000 a Sep-2025)",
+    caption = "Fuente: Elaboración propia con información del INEGI, \nhttps://www.inegi.org.mx/app/indicadores/?tm=0&t=1090"
+  )
+#
+ggsave("KmRed_Metro.png", width = 20, height = 15, units = "cm")
+
+```
+
+```{r, echo = FALSE}
+
+ggplot(data = Datos, aes(x = Fecha, y = KilometrosRecorridos_Miles)) + 
+  geom_line(linewidth = 0.5, color = "darkorange") +
+  #geom_point(size = 1.0, color = "darkblue") + 
+  #theme_bw() + 
+  xlab("Tiempo") + 
+  ylab("Miles de Km") + 
+  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0)) + 
+  theme(plot.subtitle = element_text(size = 10, hjust = 0)) + 
+  theme(plot.caption = element_text(size = 10, hjust = 0)) +
+  theme(plot.margin = unit(c(1,1,1,1), "cm")) +
+  labs(
+    title = "Kilómetros recorridos (Miles) en el Metro de la CDMX",
+    subtitle = "(Ene-2000 a Sep-2025)",
+    caption = "Fuente: Elaboración propia con información del INEGI, \nhttps://www.inegi.org.mx/app/indicadores/?tm=0&t=1090"
+  )
+#
+ggsave("KmRecord_Metro.png", width = 20, height = 15, units = "cm")
+
+```
+
+```{r, echo = FALSE}
+
+ggplot(data = Datos, aes(x = Fecha, y = EnergiaElectricaConsumida_mKWH)) + 
+  geom_line(linewidth = 0.5, color = "gold") +
+  #geom_point(size = 1.0, color = "darkblue") + 
+  #theme_bw() + 
+  xlab("Tiempo") + 
+  ylab("Miles de KWH") + 
+  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0)) + 
+  theme(plot.subtitle = element_text(size = 10, hjust = 0)) + 
+  theme(plot.caption = element_text(size = 10, hjust = 0)) +
+  theme(plot.margin = unit(c(1,1,1,1), "cm")) +
+  labs(
+    title = "Energía eléctrica consumida (Miles de KWH)",
+    subtitle = "(Ene-2000 a Sep-2025)",
+    caption = "Fuente: Elaboración propia con información del INEGI, \nhttps://www.inegi.org.mx/app/indicadores/?tm=0&t=1090"
+  )
+#
+ggsave("KmRecord_Metro.png", width = 20, height = 15, units = "cm")
+
+```
+
+### Tarea
+
+1. Crea indicador de Pasajeros por kilómetro reocrrido. Grafica ambos indicadores.
+2. Considera 3 períodos: 1) Antes de la línea 12 (Fecha de Inauguración: 30 de octubre de 2012); 2) Después de la línea 12 (Fecha de Inauguración: 30 de octubre de 2012) y antes de la pandemía de Covid-19 (enero de 2020), y 3) Post pandemía de Covid-19 (enero de 2020).
+3. Elabora un reporte breve en el que discutas una descripción de los datos y estadísticos generados.
+
+Fecha de entrega: 8 de diciembre de 2025 por correo electrónico.
+
+# Tarea de Recuperación (1 tarea o 50% del laboratorio en el primer parcial)
+
+1. Crea indicadores de 1) Pasajeros por kilómetro reocrrido, y 2) KWH por pasajero transportado. Grafica ambos indicadores.
+2. Considera 3 períodos: 1) Antes de la línea 12 (Fecha de Inauguración: 30 de octubre de 2012); 2) Después de la línea 12 (Fecha de Inauguración: 30 de octubre de 2012) y antes de la pandemía de Covid-19 (enero de 2020), y 3) Post pandemía de Covid-19 (enero de 2020).
+3.Genera una tabla de estadisticas de caracterización de los tres periodos y del total de la muestra.
+4. Elabora un reporte breve en el que discutas una descripción de los datos y estadísticos generados.
+
+Fecha de entrega: 10 de diciembre de 2025 por correo electrónico.
+
+
+
+
