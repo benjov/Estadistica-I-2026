@@ -1,0 +1,127 @@
+---
+title: "Estadística Descriptiva: Descripciones para Datos Conjuntos"
+subtitle: "Estadística I - CIDE"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Datos: ENIGH 2024 (microdatos de hogares, INEGI)
+
+Usamos el archivo `concentradohogar.csv` de la Encuesta Nacional de
+Ingresos y Gastos de los Hogares (ENIGH) 2024, uno de los principales
+insumos para medir pobreza y desigualdad en México. El archivo viene
+comprimido; lo leemos directamente del .zip sin necesidad de descomprimirlo
+manualmente, y solo cargamos las columnas que vamos a usar (el archivo
+completo tiene 126 columnas y ~91 mil hogares).
+
+```{r lectura}
+columnas_utiles <- c("ubica_geo", "tam_loc", "est_socio", "factor",
+                      "sexo_jefe", "edad_jefe", "educa_jefe",
+                      "tot_integ", "ing_cor", "gasto_mon")
+
+zip_path <- "data/enigh2024_ns_concentradohogar_csv.zip"
+encabezado <- names(read.csv(unz(zip_path, "concentradohogar.csv"), nrows = 1))
+clases <- setNames(rep("NULL", length(encabezado)), encabezado)
+clases[columnas_utiles] <- NA  # NA = "adivina el tipo", para las columnas que sí queremos
+
+enigh <- read.csv(unz(zip_path, "concentradohogar.csv"), colClasses = clases)
+
+# sexo_jefe e ing_cor/gasto_mon vienen a nivel TRIMESTRAL en la ENIGH;
+# los llevamos a nivel mensual para que sean más fáciles de interpretar.
+enigh$ing_cor   <- enigh$ing_cor / 3
+enigh$gasto_mon <- enigh$gasto_mon / 3
+enigh$sexo_jefe <- factor(enigh$sexo_jefe, levels = c(1, 2),
+                           labels = c("Hombre", "Mujer"))
+
+str(enigh)
+```
+
+## Diagrama de dispersión: ingreso vs. gasto
+
+```{r dispersion}
+plot(enigh$ing_cor, enigh$gasto_mon, pch = 16, col = rgb(0, 0, 1, 0.05),
+     xlab = "Ingreso corriente mensual del hogar (pesos)",
+     ylab = "Gasto monetario mensual del hogar (pesos)",
+     main = "Ingreso vs. gasto, hogares ENIGH 2024",
+     xlim = quantile(enigh$ing_cor, c(0, 0.98)),
+     ylim = quantile(enigh$gasto_mon, c(0, 0.98)))
+abline(lm(gasto_mon ~ ing_cor, data = enigh), col = "firebrick", lwd = 2)
+```
+
+Recortamos los ejes al percentil 98 solo para que la nube de puntos se vea
+mejor (hay hogares con ingresos muy altos que "aplastan" la escala); los
+cálculos de abajo SÍ usan todos los hogares.
+
+## Covarianza y correlación
+
+```{r cov-cor}
+cov(enigh$ing_cor, enigh$gasto_mon)
+cor(enigh$ing_cor, enigh$gasto_mon)
+```
+
+## Tabla cruzada (contingencia): sexo del jefe(a) de hogar y nivel socioeconómico
+
+Cuando ambas variables son categóricas, la herramienta natural es la tabla
+de contingencia (conteos y proporciones cruzadas), no la correlación.
+
+```{r tabla-cruzada}
+enigh$est_socio <- factor(enigh$est_socio, levels = 1:4,
+                           labels = c("Bajo", "Medio bajo", "Medio alto", "Alto"))
+
+tabla_cruzada <- table(Sexo = enigh$sexo_jefe, `Nivel socioeconómico` = enigh$est_socio)
+tabla_cruzada
+
+# Proporciones por fila: dentro de cada sexo, ¿cómo se reparte el nivel socioeconómico?
+round(prop.table(tabla_cruzada, margin = 1), 3)
+
+mosaicplot(tabla_cruzada, color = c("gold", "orange", "tomato", "firebrick"),
+           main = "Nivel socioeconómico según sexo del jefe(a) de hogar",
+           xlab = "Sexo del jefe(a)", ylab = "Nivel socioeconómico")
+```
+
+## Boxplot comparativo: gasto por sexo del jefe(a) de hogar
+
+```{r boxplot-comparativo}
+boxplot(gasto_mon ~ sexo_jefe, data = enigh,
+        outline = FALSE,  # ocultamos atípicos extremos solo para visualizar mejor la caja
+        col = c("steelblue", "salmon"),
+        main = "Gasto mensual del hogar según sexo del jefe(a)",
+        ylab = "Gasto monetario mensual (pesos)")
+```
+
+## Gasto per cápita y su relación con el tamaño del hogar
+
+```{r gasto-per-capita}
+enigh$gasto_percapita <- enigh$gasto_mon / enigh$tot_integ
+
+plot(enigh$tot_integ, enigh$gasto_percapita, pch = 16, col = rgb(0, 0.3, 0, 0.05),
+     xlab = "Número de integrantes del hogar",
+     ylab = "Gasto mensual per cápita (pesos)",
+     main = "Economías de escala en el hogar",
+     ylim = quantile(enigh$gasto_percapita, c(0, 0.98)))
+
+medias_por_tamano <- tapply(enigh$gasto_percapita, enigh$tot_integ, mean)
+lines(as.numeric(names(medias_por_tamano)), medias_por_tamano,
+      col = "firebrick", lwd = 2, type = "b", pch = 19)
+```
+
+El gasto per cápita tiende a caer conforme crece el hogar: es evidencia de
+"economías de escala" en el consumo (varios integrantes comparten renta,
+servicios, etc.).
+
+## Para practicar
+
+1. Calcula la correlación entre `edad_jefe` y `ing_cor`. ¿Es positiva o
+   negativa? ¿El resultado es lo que esperarías?
+2. Construye una tabla cruzada entre `educa_jefe` (agrúpala en 3-4 niveles
+   con `cut()`) y `est_socio`, y comenta el patrón que observas.
+3. Compara la correlación entre ingreso y gasto SOLO para hogares con jefe
+   hombre vs. SOLO para hogares con jefe mujer (usa subconjuntos de
+   `enigh` con `enigh[enigh$sexo_jefe == "Hombre", ]`, etc.).

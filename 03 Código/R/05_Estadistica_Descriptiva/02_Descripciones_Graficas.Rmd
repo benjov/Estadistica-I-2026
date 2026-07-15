@@ -1,0 +1,127 @@
+---
+title: "Estadística Descriptiva: Descripciones Gráficas"
+subtitle: "Estadística I - CIDE"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Datos: grado promedio de escolaridad por entidad (INEGI)
+
+`Educacion.xlsx` es un archivo real de INEGI, con el grado promedio de
+escolaridad de la población de 15 años y más, por entidad federativa, sexo
+y año censal (2000, 2010, 2015, 2020). Como todo archivo "de fuente
+oficial", no viene listo para analizarse: trae títulos, notas al pie y
+encabezados en varias filas. Limpiarlo es parte del trabajo del curso.
+
+```{r limpieza}
+crudo <- readxl::read_excel("data/Educacion.xlsx", col_names = FALSE)
+
+anios <- as.character(crudo[[4]])[-1]
+categorias <- as.character(crudo[[5]])[-1]
+nombres_cols <- paste(anios, categorias, sep = "_")
+
+filas_datos <- 6:38  # fila 6 = "Estados Unidos Mexicanos" (nacional), 7:38 = 32 entidades
+
+educacion <- data.frame(Entidad = trimws(as.character(crudo[[1]][filas_datos])))
+for (j in seq_along(nombres_cols)) {
+  educacion[[nombres_cols[j]]] <- as.numeric(crudo[[j + 1]][filas_datos])
+}
+
+# Separamos el total nacional de las 32 entidades, para no mezclarlos en
+# comparaciones "entre entidades"
+nacional  <- educacion[educacion$Entidad == "Estados Unidos Mexicanos", ]
+educacion <- educacion[educacion$Entidad != "Estados Unidos Mexicanos", ]
+
+str(educacion)
+```
+
+## Histograma: distribución del grado de escolaridad en 2020
+
+```{r histograma}
+hist(educacion$`2020_Total`, breaks = 8, col = "steelblue", border = "white",
+     main = "Grado promedio de escolaridad por entidad (2020)",
+     xlab = "Años de escolaridad", ylab = "Número de entidades")
+abline(v = nacional$`2020_Total`, col = "firebrick", lwd = 2, lty = 2)
+legend("topleft", legend = "Promedio nacional", col = "firebrick", lty = 2, lwd = 2)
+```
+
+## Diagrama de caja (boxplot): comparación por sexo
+
+El boxplot resume simultáneamente mediana, cuartiles y valores atípicos, y
+es la herramienta ideal para comparar la distribución de una variable entre
+grupos.
+
+```{r boxplot-sexo}
+datos_2020 <- data.frame(
+  escolaridad = c(educacion$`2020_Hombres`, educacion$`2020_Mujeres`),
+  sexo = rep(c("Hombres", "Mujeres"), each = nrow(educacion))
+)
+
+boxplot(escolaridad ~ sexo, data = datos_2020,
+        col = c("steelblue", "salmon"),
+        main = "Escolaridad por sexo del jefe(a), 32 entidades (2020)",
+        ylab = "Años de escolaridad")
+```
+
+**Anatomía de un boxplot**: la línea dentro de la caja es la mediana; los
+bordes de la caja son el primer y tercer cuartil (Q1 y Q3); los "bigotes"
+llegan hasta 1.5 veces el rango intercuartílico; los puntos más allá de los
+bigotes son valores atípicos (ver notebook anterior).
+
+## Gráfica de barras: ranking de entidades
+
+```{r barras}
+orden <- order(educacion$`2020_Total`)
+entidades_ordenadas <- educacion[orden, ]
+
+par(mar = c(5, 10, 4, 2))
+barplot(entidades_ordenadas$`2020_Total`,
+        names.arg = entidades_ordenadas$Entidad,
+        horiz = TRUE, las = 1, cex.names = 0.6,
+        col = "darkseagreen",
+        main = "Grado promedio de escolaridad por entidad (2020)",
+        xlab = "Años de escolaridad")
+abline(v = nacional$`2020_Total`, col = "firebrick", lty = 2)
+```
+
+## Gráfica de líneas: evolución en el tiempo
+
+```{r lineas}
+anios_num <- c(2000, 2010, 2015, 2020)
+serie_nacional <- c(nacional$`2000_Total`, nacional$`2010_Total`,
+                     nacional$`2015_Total`, nacional$`2020_Total`)
+serie_hombres  <- c(nacional$`2000_Hombres`, nacional$`2010_Hombres`,
+                     nacional$`2015_Hombres`, nacional$`2020_Hombres`)
+serie_mujeres  <- c(nacional$`2000_Mujeres`, nacional$`2010_Mujeres`,
+                     nacional$`2015_Mujeres`, nacional$`2020_Mujeres`)
+
+plot(anios_num, serie_nacional, type = "b", pch = 19, col = "black",
+     ylim = range(c(serie_hombres, serie_mujeres)),
+     xlab = "Año", ylab = "Años de escolaridad",
+     main = "Evolución del grado promedio de escolaridad, nacional")
+lines(anios_num, serie_hombres, type = "b", pch = 17, col = "steelblue")
+lines(anios_num, serie_mujeres, type = "b", pch = 15, col = "salmon")
+legend("bottomright", legend = c("Total", "Hombres", "Mujeres"),
+       col = c("black", "steelblue", "salmon"), pch = c(19, 17, 15))
+```
+
+La brecha entre hombres y mujeres se ha reducido con el tiempo, pero
+¿desapareció por completo para 2020? Revisa la gráfica con cuidado.
+
+## Para practicar
+
+1. Construye el mismo boxplot por sexo pero para el año 2000, y compáralo
+   contra el de 2020. ¿Qué cambió en la brecha entre hombres y mujeres?
+2. Identifica en la gráfica de barras las 5 entidades con menor escolaridad
+   promedio en 2020. Investiga (fuera de R) alguna hipótesis económica o
+   social que explique ese patrón.
+3. Añade a la gráfica de líneas una tercera curva con la brecha
+   `Hombres - Mujeres` a través del tiempo, en un panel aparte (usa
+   `par(mfrow = c(1,2))` para mostrar ambas gráficas lado a lado).

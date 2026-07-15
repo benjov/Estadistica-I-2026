@@ -28,3 +28,13 @@ __pycache__/
 #WebVisualizations/.DS-Store
 
 #DATA_COVID_19_OriginaGitHub/
+
+# R Markdown / knitr build artifacts
+*.html
+*_cache/
+*_files/
+figure/
+
+# Claude Code: no dejar rastro de la herramienta en el repo del curso
+.claude/
+CLAUDE.md

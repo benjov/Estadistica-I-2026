@@ -1,0 +1,140 @@
+---
+title: "Estadística Descriptiva: Descripciones Numéricas"
+subtitle: "Estadística I - CIDE"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Datos: precios de combustibles en México (CRE)
+
+Trabajamos con `Gas_Prices.csv`: precios promedio diarios (pesos por litro)
+de gasolina regular, gasolina premium y diésel, reportados por la Comisión
+Reguladora de Energía (CRE).
+
+```{r datos}
+gas <- read.csv("data/Gas_Prices.csv")
+gas$Fecha <- as.Date(gas$Fecha, format = "%d/%m/%Y")
+str(gas)
+summary(gas)
+```
+
+## Tablas de frecuencia
+
+Las tablas de frecuencia resumen cuántas veces (o con qué proporción)
+aparece cada valor o rango de valores de una variable. Para una variable
+continua como el precio, primero la agrupamos en clases (intervalos).
+
+```{r tabla-frecuencia}
+clases <- cut(gas$Gasolina.Regular,
+              breaks = seq(14, 26, by = 2),
+              right = FALSE)
+
+tabla_frec <- table(clases)
+tabla_frec_rel <- prop.table(tabla_frec)
+
+data.frame(
+  Intervalo = names(tabla_frec),
+  Frecuencia = as.integer(tabla_frec),
+  `Frecuencia relativa` = round(as.numeric(tabla_frec_rel), 3),
+  `Frecuencia acumulada` = cumsum(as.integer(tabla_frec)),
+  check.names = FALSE
+)
+```
+
+## Medidas de tendencia central
+
+```{r tendencia-central}
+media_regular   <- mean(gas$Gasolina.Regular)
+mediana_regular <- median(gas$Gasolina.Regular)
+
+moda <- function(x) {
+  frecuencias <- table(x)
+  as.numeric(names(frecuencias)[frecuencias == max(frecuencias)])
+}
+moda_regular <- moda(round(gas$Gasolina.Regular, 1))  # redondeamos: en
+                                                        # variables continuas
+                                                        # la "moda" exacta
+                                                        # casi nunca se repite
+
+c(media = media_regular, mediana = mediana_regular)
+moda_regular
+```
+
+La media es sensible a valores extremos; la mediana no. Si `media` >
+`mediana`, la distribución tiene sesgo a la derecha (cola de precios altos
+más larga); si `media` < `mediana`, el sesgo es a la izquierda.
+
+## Medidas de dispersión
+
+```{r dispersion}
+rango       <- max(gas$Gasolina.Regular) - min(gas$Gasolina.Regular)
+varianza    <- var(gas$Gasolina.Regular)
+desv_std    <- sd(gas$Gasolina.Regular)
+coef_var    <- desv_std / media_regular  # adimensional: compara dispersión
+                                          # relativa entre variables distintas
+
+c(rango = rango, varianza = varianza, desviacion_estandar = desv_std,
+  coeficiente_variacion = coef_var)
+```
+
+## Medidas de posición: cuantiles y percentiles
+
+```{r posicion}
+cuartiles <- quantile(gas$Gasolina.Regular, probs = c(0.25, 0.5, 0.75))
+cuartiles
+
+rango_intercuartilico <- cuartiles["75%"] - cuartiles["25%"]
+rango_intercuartilico
+
+percentil_90 <- quantile(gas$Gasolina.Regular, probs = 0.90)
+percentil_90
+```
+
+## Valores atípicos (outliers) y calidad de datos
+
+Una regla práctica (regla de Tukey) marca como atípico cualquier valor
+fuera de `[Q1 - 1.5*RIC, Q3 + 1.5*RIC]`.
+
+```{r outliers}
+limite_inferior <- cuartiles["25%"] - 1.5 * rango_intercuartilico
+limite_superior <- cuartiles["75%"] + 1.5 * rango_intercuartilico
+
+atipicos <- gas[gas$Gasolina.Regular < limite_inferior |
+                  gas$Gasolina.Regular > limite_superior, ]
+nrow(atipicos)
+head(atipicos)
+```
+
+```{r na-check}
+# Antes de confiar en cualquier resumen numérico, siempre hay que revisar
+# valores faltantes.
+colSums(is.na(gas))
+```
+
+## Comparando las tres series de precios
+
+```{r comparacion-tres-series}
+resumen_comparativo <- sapply(gas[, c("Gasolina.Regular", "Gasolina.Premium", "Diesel")],
+                               function(x) c(media = mean(x), mediana = median(x),
+                                             sd = sd(x), CV = sd(x) / mean(x)))
+round(resumen_comparativo, 3)
+```
+
+## Para practicar
+
+1. Calcula la tabla de frecuencia de `Diesel` usando intervalos de tu
+   elección y comenta si la distribución luce simétrica o sesgada.
+2. ¿Cuál de las tres series de precios (regular, premium, diésel) tiene
+   mayor dispersión relativa (coeficiente de variación)? ¿Tiene sentido
+   económico ese resultado?
+3. Filtra `gas` para quedarte solo con el año 2023
+   (`format(gas$Fecha, "%Y") == "2023"`) y recalcula la media y la
+   desviación estándar de `Gasolina.Regular` para ese año. Compara contra
+   los valores de la serie completa.

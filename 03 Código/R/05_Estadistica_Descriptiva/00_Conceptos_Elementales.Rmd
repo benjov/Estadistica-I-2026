@@ -1,0 +1,107 @@
+---
+title: "Estadística Descriptiva: Conceptos Elementales"
+subtitle: "Estadística I - CIDE"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Objetivo
+
+Este es el primer notebook del módulo de Estadística Descriptiva (tema
+transversal del curso). Aquí fijamos el vocabulario básico -población,
+muestra, tipos de variables- antes de entrar a describir datos reales con
+números (siguiente notebook) y con gráficas (notebook 2 y 3).
+
+## Población y muestra
+
+- **Población**: el conjunto completo de unidades sobre las que queremos
+  hacer inferencia (por ejemplo, todos los hogares de México).
+- **Muestra**: un subconjunto de la población que efectivamente observamos
+  (por ejemplo, los ~90 mil hogares encuestados en la ENIGH).
+- **Parámetro**: una característica numérica de la población (casi siempre
+  desconocida). **Estadístico**: la misma característica pero calculada con
+  la muestra (nuestra mejor aproximación al parámetro).
+
+## Tipos de variables y escalas de medición
+
+```{r tabla-tipos, echo=FALSE}
+tipos <- data.frame(
+  Tipo = c("Cualitativa nominal", "Cualitativa ordinal",
+           "Cuantitativa discreta", "Cuantitativa continua"),
+  Ejemplo = c("Entidad federativa, sexo del jefe de hogar",
+              "Nivel socioeconómico (bajo/medio/alto)",
+              "Número de integrantes del hogar",
+              "Ingreso trimestral del hogar (pesos)"),
+  `Operaciones válidas` = c("Igual / distinto",
+                             "Igual/distinto, orden",
+                             "Igual/distinto, orden, diferencias, sumas",
+                             "Igual/distinto, orden, diferencias, sumas, cocientes"),
+  check.names = FALSE
+)
+knitr::kable(tipos)
+```
+
+La distinción importa porque determina qué resúmenes numéricos y qué
+gráficas tienen sentido: no calculamos una "media" de entidades federativas,
+pero sí calculamos una media de ingreso.
+
+## Estructuras de datos en R para cada tipo de variable
+
+```{r estructuras}
+# Cualitativa nominal: usualmente un vector de caracteres o un factor
+sexo_jefe <- factor(c("Hombre", "Mujer", "Hombre", "Mujer", "Mujer"))
+levels(sexo_jefe)
+table(sexo_jefe)
+
+# Cualitativa ordinal: un factor CON orden explícito en los niveles
+nivel_socioeconomico <- factor(c("Bajo", "Alto", "Medio", "Medio", "Bajo"),
+                                levels = c("Bajo", "Medio", "Alto"),
+                                ordered = TRUE)
+nivel_socioeconomico
+nivel_socioeconomico[1] < nivel_socioeconomico[2]  # comparación válida por ser ordinal
+
+# Cuantitativa discreta: vector numérico con valores "contables"
+integrantes_hogar <- c(4, 2, 5, 3, 4, 1)
+
+# Cuantitativa continua: vector numérico con valores en un rango continuo
+ingreso_trimestral <- c(45320.5, 38210.0, 62100.75, 29875.2)
+```
+
+## Un vistazo a un data frame real
+
+A lo largo de este módulo usaremos tres bases de datos reales, todas en la
+carpeta `data/`:
+
+- `Gas_Prices.csv`: precios promedio diarios de gasolina y diésel en México
+  (fuente: CRE).
+- `Educacion.xlsx`: grado promedio de escolaridad por entidad, sexo y año
+  (fuente: INEGI).
+- `enigh2024_ns_concentradohogar_csv.zip`: microdatos de ingreso y gasto de
+  hogares, Encuesta Nacional de Ingresos y Gastos de los Hogares 2024
+  (fuente: INEGI).
+
+```{r primer-vistazo}
+gas <- read.csv("data/Gas_Prices.csv")
+str(gas)
+head(gas)
+```
+
+Identifica en `gas`: ¿cuál columna es cualitativa? ¿Cuáles son cuantitativas
+continuas? ¿Hay alguna variable de tiempo (fecha)?
+
+## Para practicar
+
+1. Clasifica las siguientes variables de la ENIGH según la tabla de arriba:
+   `sexo_jefe`, `edad_jefe`, `tot_integ`, `est_socio`, `ing_cor`.
+2. Convierte la columna `Fecha` de `gas` a un objeto de tipo fecha con
+   `as.Date(gas$Fecha, format = "%d/%m/%Y")` y verifica con `class()` que el
+   tipo cambió correctamente.
+3. Explica con tus palabras por qué tratar una variable ordinal (como
+   nivel socioeconómico) como si fuera nominal nos hace perder información.
