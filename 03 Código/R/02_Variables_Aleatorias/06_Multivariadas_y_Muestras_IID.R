@@ -1,7 +1,7 @@
 # ============================================================================
 # Estadística I - CIDE
 # Tema 2: Variables Aleatorias
-# 2.h) Distribuciones multivariadas y muestras IID  |  2.i) Distribuciones multivariadas
+# 2.h) Distribuciones multivariadas y muestras IID
 # ============================================================================
 #
 # Generalizamos de dos a k variables aleatorias X_1, ..., X_k. Un caso

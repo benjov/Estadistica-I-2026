@@ -35,6 +35,25 @@ __pycache__/
 *_files/
 figure/
 
+# LaTeX: artefactos de compilación (el .tex y el .pdf sí se versionan)
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+*.synctex(busy)
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.nav
+*.snm
+*.vrb
+
 # Claude Code: no dejar rastro de la herramienta en el repo del curso
 .claude/
 CLAUDE.md

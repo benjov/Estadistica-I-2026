@@ -1,0 +1,161 @@
+% ============================================================
+%  Temario — Estadística I
+%  Licenciatura en Economía, CIDE. Otoño 2026.
+% ============================================================
+
+\documentclass[letterpaper, 12pt]{article}
+\pagestyle{plain}
+
+\usepackage[utf8]{inputenc}     % Acentos
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}     % Idioma español
+
+\usepackage{amsfonts}           % Matemáticas
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{graphicx}           % Gráficos e imágenes
+\usepackage[margin=2.5cm]{geometry}
+
+\usepackage[colorlinks=true, linkcolor=black, urlcolor=blue,
+            citecolor=blue]{hyperref}
+
+\title{\textbf{Centro de Investigación y Docencia Económicas, A.C.} \\ División de Economía \\ \textbf{Estadística I}. \\ Programa de Licenciatura en Economía \\ Otoño 2026}
+
+\author{Benjamín Oliva-Vázquez \\ (\url{benjamin.oliva@cide.edu} \\ y \\ 
+ \url{benjov@ciencias.unam.mx}) \\ \\ \textbf{Laboratorista}: \\ Giovanni Paulo Ordonez Corona \\ (\url{giovanni.ordonez@alumnos.cide.edu}) }
+
+\date{Agosto 2026}
+
+\begin{document}
+\maketitle
+
+\textbf{Objetivos}: 
+\begin{enumerate}
+    \item Desarrollar las herramientas teóricas y prácticas de probabilidad e introducir el análisis de estadística descriptiva e inferencia estadística.
+    
+    \item Establecer las bases para el uso de paquetes estadísticos y de procesamiento de datos en R.
+\end{enumerate}
+
+\textbf{Materiales}: el temario, los laboratorios y el código de clase están disponibles en \href{https://github.com/benjov/Estadistica-I-2026}{GitHub}.\footnote{\url{https://github.com/benjov/Estadistica-I-2026}} La bibliografía está disponible, sólo para las personas integrantes del grupo, en \href{https://drive.google.com/drive/folders/1eQlLrz9h-DBz7NLsZazcqHM0bCM204w_?usp=sharing}{Google Drive}.
+
+\textbf{Horarios:} 
+\begin{enumerate}
+\item Clases: viernes de 9:00 a 12:00 hrs en el Aula de Videoconferencias del edificio Santa Fe.
+
+\item Las horas de oficina podrán ser en línea o presenciales y se programarán en función de los requerimientos de cada persona, y 
+
+\item Laboratorios: lunes a las 9:40 hrs en el mismo salón (Aula de Videoconferencias, edificio Santa Fe).
+\end{enumerate}
+
+\section{Temario}
+
+\begin{enumerate}
+\item Probabilidad
+	\begin{enumerate}
+    	\item Espacios Muestrales y Eventos
+        \item Cálculo Combinatorio
+        \item Definición de Probabilidad
+        \item Independencia
+        \item Probabilidad Condicional
+        \item Teorema de Bayes
+    \end{enumerate}
+\item Variables Aleatorias
+	\begin{enumerate}
+    	\item Funciones de Distribución y de Probabilidad
+        \item Algunas funciones de Variables Aleatorias Discretas
+        \item Algunas funciones de Variables Aleatorias Continuas
+        \item Distribuciones Bivariadas
+        \item Distribuciones Marginales
+        \item Variables Aleatorias Independientes
+        \item Distribuciones Condicionales 
+        \item Distribuciones Multivariadas y Muestras IID
+        \item Transformaciones\footnote{Tema optativo y se verá según disponibilidad de tiempo.}
+    \end{enumerate}
+\item Esperanza
+	\begin{enumerate}
+    	\item Esperanza de variables aleatorias
+        \item Propiedades de la Esperanza
+        \item Varianza y Covarianza
+        \item Esperanza y Varianza de algunas variables aleatorias
+        \item Esperanza Condicional
+        \item Funciones Generadoras de Momentos
+    \end{enumerate}
+\item Algunas Desigualdades Importantes
+    \begin{enumerate}
+        \item Desigualdades de Probabilidad
+        \item Desigualdades de Esperanza
+    \end{enumerate}
+\item Convergencia de Variables Aleatorias
+    \begin{enumerate}
+        \item Tipos de convergencia
+        \item La Ley de los Grandes Números
+        \item El Teorema de Límite Central
+    \end{enumerate}
+\item Estadística Descriptiva con R (tema transversal que se verá durante la primera mitad del curso)
+	\begin{enumerate}
+    	\item Conceptos elementales
+        \item Descripciones numéricas
+        \item Descripciones gráficas
+        \item Descripciones para datos conjuntos
+    \end{enumerate}
+\end{enumerate}
+
+\section{Bibliografía}
+\begin{itemize}
+    \item Agresti, Alan y Maria Kateri (2021) \textit{Foundations of Statistics for Data Scientists: With R and Python}. Ed. Chapman and Hall/CRC.
+    
+    \item Larsen, Richard J., y Morris L. Marx (2018) \textit{An Introduction to Mathematical Statistics and its Applications}. 6ta Edición. Ed. Pearson. (*) 
+    
+    \item Miller, Irwin, y Marylees Miller (2014) \textit{John E. Freund's Mathematical Statistics with Applications}. 8va. Edición. Ed. Pearson. (*)
+    
+    \item Wackerly, Dennis D., William Mendenhall III y Richard L. Scheaffer (2008) \textit{Mathematical Statistics with Applications}. 7ma Edición. Ed. Thomson Learning. (*)
+    
+    \item Wasserman, Larry (2004) \textit{All of Statistics. A Concise Course in Statistical Inference}. Springer Texts in Statistics. Springer. 
+\end{itemize}
+
+Todos los textos estarán disponibles sólo para las personas integrantes del grupo en \href{https://drive.google.com/drive/folders/1eQlLrz9h-DBz7NLsZazcqHM0bCM204w_?usp=sharing}{Google Drive}.
+
+Notas: (*) Textos base o principales del curso.
+
+\section{Evaluación}
+\begin{enumerate}
+    \item Tareas, quizzes y otras asignaciones en R (15\%)
+    \item Laboratorio (15\%)
+    \item Examen Parcial (35\%)
+    \item Examen Final (35\%)
+\end{enumerate}
+
+\section{Calendario (tentativo)}
+
+\textbf{Nota}: Las fechas mostradas a continuación están sujetas a cambios en función de un acuerdo o consenso del grupo.
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{| c | c |}
+\hline
+\hline
+    \textbf{Laboratorio / Examen} & \textbf{Fecha de Entrega o} \\
+     & \textbf{Aplicación (tentativa)} \\
+\hline \hline
+    Laboratorio 1 & 31 de agosto de 2026 \\ \hline
+    Laboratorio 2 & 7 de septiembre de 2026 \\ \hline
+    Laboratorio 3 & 14 de septiembre de 2026 \\ \hline
+    Laboratorio 4 & 21 de septiembre de 2026 \\ \hline
+\hline
+    Examen Parcial (temas 1 y 2*) & 2 de octubre de 2026 \\ \hline
+\hline
+    Laboratorio 5 & 19 de octubre de 2026 \\ \hline
+    Laboratorio 6 & 26 de octubre de 2026 \\ \hline
+    Laboratorio 7 & 2 de noviembre de 2026 \\ \hline
+    Laboratorio 8 & 9 de noviembre de 2026 \\ \hline
+\hline
+    Examen Final (temas 2*, 3, 4 y 5) & 11 de diciembre de 2026 \\ \hline
+\hline
+\multicolumn{2}{l}{\textit{Notas}: * Este tema podría evaluarse de forma parcial} \\
+\multicolumn{2}{l}{dependiendo del avance del curso.}\\
+\end{tabular}
+\label{Calendario}
+\end{table}
+
+\end{document}

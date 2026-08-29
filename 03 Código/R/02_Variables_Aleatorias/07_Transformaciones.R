@@ -1,7 +1,7 @@
 # ============================================================================
 # Estadística I - CIDE
 # Tema 2: Variables Aleatorias
-# 2.j) Transformaciones de variables aleatorias  (tema optativo)
+# 2.i) Transformaciones de variables aleatorias  (tema optativo)
 # ============================================================================
 #
 # Si Y = g(X) para alguna función g, ¿cómo obtenemos la distribución de Y a
